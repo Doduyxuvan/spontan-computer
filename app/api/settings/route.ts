@@ -9,7 +9,16 @@ export async function GET() {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+
+  return NextResponse.json({
+    siteTitle: data.site_title,
+    description: data.description,
+    whatsappNumber: data.whatsapp_number,
+    heroImage: data.hero_image,
+    logo: data.logo,
+    address: data.address,
+    operationalHours: data.operational_hours,
+  })
 }
 
 export async function PUT(req: NextRequest) {
@@ -21,7 +30,15 @@ export async function PUT(req: NextRequest) {
 
   let result
   if (!existing) {
-    const { data, error } = await supabase.from('settings').insert(body).select().single()
+    const { data, error } = await supabase.from('settings').insert({
+      site_title: body.siteTitle,
+      description: body.description,
+      whatsapp_number: body.whatsappNumber,
+      hero_image: body.heroImage,
+      logo: body.logo,
+      address: body.address,
+      operational_hours: body.operationalHours,
+    }).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     result = data
   } else {
@@ -43,5 +60,13 @@ export async function PUT(req: NextRequest) {
     result = data
   }
 
-  return NextResponse.json(result)
+  return NextResponse.json({
+    siteTitle: result.site_title,
+    description: result.description,
+    whatsappNumber: result.whatsapp_number,
+    heroImage: result.hero_image,
+    logo: result.logo,
+    address: result.address,
+    operationalHours: result.operational_hours,
+  })
 }
