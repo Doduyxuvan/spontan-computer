@@ -77,8 +77,6 @@ export default async function DashboardPage() {
                   transition: 'all 0.2s',
                   cursor: 'pointer',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
               >
                 <div
                   style={{
