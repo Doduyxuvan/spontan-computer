@@ -1,0 +1,437 @@
+================================================================
+TOKO WA PROJECT — STATUS FILE & YANG BELUM DIBUAT
+================================================================
+Dibuat: 29 April 2026
+================================================================
+
+
+================================================================
+SUDAH DIBUAT (11 file baru / diupdate)
+================================================================
+
+[✅] middleware.ts                          — proteksi route /admin/*
+[✅] app/layout.tsx                         — diupdate: Navbar + Footer + fetch settings
+[✅] app/admin/layout.tsx                   — layout admin + cek session + AdminSidebar
+[✅] components/user/WAButton.tsx           — tombol WhatsApp reusable
+[✅] components/user/ProductCard.tsx        — card produk dengan format Rupiah
+[✅] components/user/Navbar.tsx             — navbar sticky + mobile hamburger
+[✅] components/user/Footer.tsx             — footer dengan kontak & nav
+[✅] components/admin/AdminSidebar.tsx      — sidebar admin gelap + active state
+[✅] components/admin/AdminHeader.tsx       — header admin + logout
+
+(sudah ada sejak awal / dari proyek original)
+[✅] app/api/auth/login/route.ts
+[✅] app/api/auth/logout/route.ts
+[✅] app/api/products/route.ts
+[✅] app/api/products/[id]/route.ts
+[✅] app/api/categories/route.ts
+[✅] app/api/categories/[id]/route.ts
+[✅] app/api/testimonials/route.ts
+[✅] app/api/testimonials/[id]/route.ts
+[✅] app/api/settings/route.ts
+[✅] lib/auth.ts
+[✅] lib/db.ts
+[✅] models/Admin.ts, Category.ts, Product.ts, Settings.ts, Testimonial.ts
+
+
+================================================================
+BELUM DIBUAT — 12 FILE TERSISA
+================================================================
+
+
+----------------------------------------------------------------
+1. app/page.tsx  (UPDATE — HALAMAN BERANDA)
+----------------------------------------------------------------
+Lokasi   : /app/page.tsx
+Status   : File sudah ada tapi masih boilerplate Next.js default,
+           belum diisi konten toko sama sekali.
+
+Yang harus dibuat:
+
+  SECTION 1 — HERO
+  - Heading besar serif: "Produk Terbaik, Harga Terjangkau"
+  - Sub-heading dari settings.description
+  - Tombol CTA besar pakai <WAButton>
+  - Background: settings.heroImage dengan overlay gelap
+  - Fallback jika kosong: gradient hijau (var --accent)
+
+  SECTION 2 — PRODUK UNGGULAN
+  - Heading "Produk Unggulan"
+  - Fetch GET /api/products?featured=true (ambil max 6)
+  - Grid 2 kolom mobile / 3 kolom desktop
+  - Pakai komponen <ProductCard>
+  - Tombol "Lihat Semua Produk" → /products
+
+  SECTION 3 — KEUNGGULAN
+  - Heading "Kenapa Pilih Kami?"
+  - 4 kotak keunggulan dengan emoji + teks:
+      ✅ Produk Berkualitas
+      🚀 Pengiriman Cepat
+      💰 Harga Terjangkau
+      🛡️ Bergaransi
+  - Grid 2x2 mobile / 4 kolom desktop
+
+  SECTION 4 — TESTIMONI
+  - Heading "Kata Mereka"
+  - Fetch GET /api/testimonials (ambil 3 terbaru)
+  - Tampilkan sebagai cards horizontal
+  - Tombol "Lihat Semua" → /testimonials
+
+  SECTION 5 — CTA BOTTOM
+  - Background warna accent (hijau)
+  - Heading "Siap untuk Pesan?"
+  - Tombol <WAButton> besar
+
+
+----------------------------------------------------------------
+2. app/products/page.tsx  (BARU — HALAMAN SEMUA PRODUK)
+----------------------------------------------------------------
+Lokasi   : /app/products/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Heading halaman "Semua Produk"
+  - Filter kategori (tombol tab):
+      "Semua" | "Kategori A" | "Kategori B" dst
+      Fetch dari GET /api/categories
+      Klik tombol → filter produk dengan useState (tanpa reload halaman)
+  - Grid produk:
+      2 kolom mobile / 3-4 kolom desktop
+      Pakai <ProductCard>
+      Fetch dari GET /api/products?category={id}
+  - State: loading skeleton | data kosong | error
+
+  Catatan teknis:
+  - Gunakan 'use client' karena ada interaksi filter
+  - useState untuk activeCategory
+  - useEffect untuk re-fetch saat category berubah
+
+
+----------------------------------------------------------------
+3. app/products/[id]/page.tsx  (BARU — DETAIL PRODUK)
+----------------------------------------------------------------
+Lokasi   : /app/products/[id]/page.tsx
+Status   : Folder [id] ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  Layout 2 kolom desktop / 1 kolom mobile:
+
+  Kolom Kiri:
+  - Gambar produk besar (aspect-square)
+  - Fallback placeholder 📦 jika image kosong
+
+  Kolom Kanan:
+  - Badge nama kategori
+  - Nama produk (heading besar serif)
+  - Harga format Rupiah (besar, warna accent)
+  - Garis pemisah <hr>
+  - Deskripsi lengkap (whitespace-pre-wrap)
+  - Tombol <WAButton> full width
+    (label: "Pesan Sekarang", productName otomatis terisi)
+
+  Bagian bawah:
+  - Section "Produk Lainnya"
+  - Fetch produk dari kategori yang sama (max 4)
+  - Grid <ProductCard>
+
+  Catatan teknis:
+  - Ini Server Component, fetch data di server
+  - Params: { params: { id: string } }
+  - fetch('/api/products/{id}') untuk data produk
+
+
+----------------------------------------------------------------
+4. app/testimonials/page.tsx  (BARU — HALAMAN TESTIMONI)
+----------------------------------------------------------------
+Lokasi   : /app/testimonials/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Heading "Testimoni Pelanggan"
+  - Sub-heading "Apa kata mereka tentang produk kami"
+  - Grid 2 kolom desktop / 1 kolom mobile
+  - Setiap card berisi:
+      → Avatar bulat: foto jika ada, fallback: inisial nama (huruf pertama)
+      → Nama pelanggan
+      → Rating bintang: ★★★★★ (bintang kuning sesuai rating 1-5)
+      → Pesan review (text lengkap)
+  - CTA di bawah:
+      "Tertarik? Pesan Sekarang" → link WhatsApp
+
+  Catatan teknis:
+  - Server Component, fetch data di server
+  - fetch('/api/testimonials') untuk semua testimoni
+  - Render bintang dengan array .map() dari rating (1..5)
+
+
+----------------------------------------------------------------
+5. app/tentang/page.tsx  (BARU — HALAMAN TENTANG & KONTAK)
+----------------------------------------------------------------
+Lokasi   : /app/tentang/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Heading "Tentang Kami"
+  - Paragraf deskripsi bisnis dari settings.description
+  - Section Kontak:
+      📱 Nomor WhatsApp (klik → wa.me link)
+      📍 Alamat (dari settings.address)
+      🕐 Jam Operasional (dari settings.operationalHours)
+  - Tombol <WAButton> besar: "Hubungi Kami Sekarang"
+
+  Catatan teknis:
+  - Server Component
+  - fetch('/api/settings') untuk data kontak
+
+
+----------------------------------------------------------------
+6. app/admin/login/page.tsx  (BARU — HALAMAN LOGIN ADMIN)
+----------------------------------------------------------------
+Lokasi   : /app/admin/login/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+Catatan  : Halaman ini TIDAK pakai admin layout (tidak ada sidebar),
+           jadi perlu dikecualikan dari app/admin/layout.tsx atau
+           dibuat sebagai standalone.
+
+Yang harus dibuat:
+
+  - Layout: full screen centered, background gelap/gradient
+  - Card putih di tengah berisi:
+      → Logo / nama toko
+      → Heading "Admin Login"
+      → Input email (type=email, required)
+      → Input password (type=password, required)
+      → Tombol "Masuk" full width warna hijau
+      → Pesan error merah jika login gagal
+  - Logika submit:
+      POST /api/auth/login dengan { email, password }
+      Sukses → router.push('/admin/dashboard')
+      Gagal → tampilkan "Email atau password salah"
+
+  Catatan teknis:
+  - Gunakan 'use client' karena ada form interaktif
+  - useState untuk email, password, error, loading
+  - Gunakan router dari next/navigation
+
+
+----------------------------------------------------------------
+7. app/admin/dashboard/page.tsx  (BARU — DASHBOARD ADMIN)
+----------------------------------------------------------------
+Lokasi   : /app/admin/dashboard/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Pakai <AdminHeader title="Dashboard" email={session.email} />
+  - Pesan selamat datang: "Selamat datang, {email}"
+  - 4 kartu statistik masing-masing beda warna:
+      📦 Total Produk      → fetch /api/products → count
+      🏷️  Total Kategori   → fetch /api/categories → count
+      💬 Total Testimoni  → fetch /api/testimonials → count
+      ✅ Status Website   → selalu "Aktif"
+  - Setiap kartu: angka besar + label + icon
+  - Shortcut / link cepat ke masing-masing menu admin
+
+  Catatan teknis:
+  - Server Component, ambil session dari getAdminSession()
+  - Parallel fetch semua data dengan Promise.all
+  - Redirect ke /admin/login jika session null
+
+
+----------------------------------------------------------------
+8. app/admin/products/page.tsx  (BARU — KELOLA PRODUK)
+----------------------------------------------------------------
+Lokasi   : /app/admin/products/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Pakai <AdminHeader title="Produk" />
+  - Tombol "Tambah Produk" di kanan atas (buka modal/form)
+  - Tabel produk:
+      Kolom: Gambar mini | Nama | Kategori | Harga | Featured | Aksi
+      Aksi: tombol Edit (biru) + Hapus (merah)
+      Konfirmasi hapus pakai window.confirm
+  - Modal / form tambah-edit:
+      Input: Nama, Harga, Deskripsi (textarea), URL Gambar,
+             Kategori (dropdown dari /api/categories),
+             Featured (checkbox)
+      Preview gambar real-time jika URL diisi
+      Tombol Simpan + Batal
+
+  API calls:
+      Tambah → POST /api/products
+      Edit   → PUT /api/products/[id]
+      Hapus  → DELETE /api/products/[id]
+
+  Catatan teknis:
+  - 'use client' karena banyak interaksi
+  - useState untuk list produk, modal open/close, form data
+  - useEffect untuk fetch awal
+
+
+----------------------------------------------------------------
+9. app/admin/categories/page.tsx  (BARU — KELOLA KATEGORI)
+----------------------------------------------------------------
+Lokasi   : /app/admin/categories/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Pakai <AdminHeader title="Kategori" />
+  - Form inline di atas tabel:
+      Input nama kategori + tombol "Tambah"
+      POST /api/categories
+  - Tabel daftar kategori:
+      Kolom: Nama | Aksi
+      Edit inline: klik edit → input muncul di baris yang sama
+      PUT /api/categories/[id]
+      Hapus → DELETE /api/categories/[id]
+
+  Catatan teknis:
+  - 'use client'
+  - useState untuk list, editingId, editValue, newName
+
+
+----------------------------------------------------------------
+10. app/admin/testimonials/page.tsx  (BARU — KELOLA TESTIMONI)
+----------------------------------------------------------------
+Lokasi   : /app/admin/testimonials/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Pakai <AdminHeader title="Testimoni" />
+  - Tombol "Tambah Testimoni" di kanan atas
+  - Tabel testimoni:
+      Kolom: Nama | Pesan (truncate 50 karakter) | Rating | Aksi
+      Aksi: Edit + Hapus
+  - Modal / form tambah-edit:
+      Input: Nama pelanggan, Pesan (textarea), Rating (select 1-5),
+             URL Foto (opsional)
+      Tombol Simpan + Batal
+
+  API calls:
+      Tambah → POST /api/testimonials
+      Edit   → PUT /api/testimonials/[id]
+      Hapus  → DELETE /api/testimonials/[id]
+
+  Catatan teknis:
+  - 'use client'
+  - Sama polanya dengan halaman products
+
+
+----------------------------------------------------------------
+11. app/admin/settings/page.tsx  (BARU — PENGATURAN WEBSITE)
+----------------------------------------------------------------
+Lokasi   : /app/admin/settings/page.tsx
+Status   : Folder ada, file page.tsx belum dibuat.
+
+Yang harus dibuat:
+
+  - Pakai <AdminHeader title="Pengaturan" />
+  - Fetch GET /api/settings untuk isi form awal
+  - Form dibagi beberapa section:
+
+      INFORMASI UMUM:
+      - Judul Website (text input)
+      - Deskripsi Website (textarea)
+
+      KONTAK:
+      - Nomor WhatsApp (text, format 628xxx tanpa +)
+        → Preview link: wa.me/{nomor} muncul di bawah input
+      - Alamat (text)
+      - Jam Operasional (text)
+
+      TAMPILAN:
+      - URL Logo (text) + preview gambar jika URL valid
+      - URL Hero Image (text) + preview gambar jika URL valid
+
+  - Tombol "Simpan Pengaturan" full width warna hijau
+    → PUT /api/settings
+  - Notifikasi sukses (toast atau alert) setelah simpan
+
+  Catatan teknis:
+  - 'use client'
+  - useState untuk semua field form
+  - useEffect untuk fetch data awal
+
+
+----------------------------------------------------------------
+12. scripts/seed.ts  (BONUS — DATA AWAL)
+----------------------------------------------------------------
+Lokasi   : /scripts/seed.ts
+Status   : Belum ada, bonus tapi sangat disarankan.
+Cara run : npx ts-node scripts/seed.ts
+
+Yang harus dilakukan:
+  1. Connect ke MongoDB via MONGODB_URI dari .env.local
+  2. Hapus data lama (opsional, bisa di-comment)
+  3. Insert Settings default:
+       siteTitle: "Toko Kita"
+       whatsappNumber: "6281234567890"
+       description: "Produk terbaik pilihan kami"
+       address: "Jl. Contoh No. 1, Jakarta"
+       operationalHours: "Senin–Sabtu 08.00–17.00 WIB"
+  4. Insert 3 kategori: Makanan, Minuman, Aksesoris
+  5. Insert 6 produk contoh dengan nama, harga, deskripsi, featured
+  6. Insert 4 testimoni contoh dengan nama, pesan, rating 4-5
+  7. Insert admin default:
+       email   : admin@toko.com
+       password: admin123 (di-hash dengan bcrypt)
+
+
+================================================================
+CATATAN PENTING UNTUK DEVELOPER
+================================================================
+
+1. app/admin/layout.tsx saat ini akan apply ke SEMUA halaman
+   di dalam /admin/ termasuk /admin/login. Solusi:
+   - Cek pathname di layout, jika /admin/login jangan render sidebar
+   - ATAU pindahkan /admin/login ke luar admin layout (buat
+     folder /app/(auth)/admin/login/)
+
+2. Nomor WhatsApp di settings harus format: 628xxxxxxxxxx
+   (tanpa +, tanpa spasi). Komponen WAButton sudah handle
+   pembersihan karakter non-angka.
+
+3. Semua fetch ke /api/* dari Server Component perlu base URL
+   absolut. Sudah dihandle di app/layout.tsx dengan:
+   process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+   Pastikan NEXT_PUBLIC_BASE_URL diisi di .env.local saat deploy.
+
+4. File .env.local perlu berisi:
+   MONGODB_URI=mongodb+srv://...
+   JWT_SECRET=rahasia-panjang-acak
+   NEXT_PUBLIC_BASE_URL=https://domain-anda.com
+
+
+================================================================
+RINGKASAN SISA PEKERJAAN
+================================================================
+
+  Halaman User (5 file):
+    [ ] app/page.tsx                    (update/rewrite)
+    [ ] app/products/page.tsx           (baru)
+    [ ] app/products/[id]/page.tsx      (baru)
+    [ ] app/testimonials/page.tsx       (baru)
+    [ ] app/tentang/page.tsx            (baru)
+
+  Halaman Admin (6 file):
+    [ ] app/admin/login/page.tsx        (baru)
+    [ ] app/admin/dashboard/page.tsx    (baru)
+    [ ] app/admin/products/page.tsx     (baru)
+    [ ] app/admin/categories/page.tsx   (baru)
+    [ ] app/admin/testimonials/page.tsx (baru)
+    [ ] app/admin/settings/page.tsx     (baru)
+
+  Bonus (1 file):
+    [ ] scripts/seed.ts                 (baru)
+
+  TOTAL TERSISA: 12 file
+
+================================================================
