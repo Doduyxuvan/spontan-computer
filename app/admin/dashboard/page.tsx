@@ -68,16 +68,7 @@ export default async function DashboardPage() {
               href={card.href}
               style={{ textDecoration: 'none' }}
             >
-              <div
-                style={{
-                  background: '#fff',
-                  border: '1px solid var(--border)',
-                  borderRadius: 16,
-                  padding: 24,
-                  transition: 'all 0.2s',
-                  cursor: 'pointer',
-                }}
-              >
+              <div className="stat-card">
                 <div
                   style={{
                     width: 48,
