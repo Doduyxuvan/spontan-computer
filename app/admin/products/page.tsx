@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import AdminHeader from '@/components/admin/AdminHeader'
+import { supabase } from '@/lib/db'
 
 interface Category { _id: string; name: string }
 interface Product {
@@ -29,6 +30,8 @@ export default function AdminProductsPage() {
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState<FormData>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const fetchAll = () => {
     setLoading(true)
@@ -54,6 +57,24 @@ export default function AdminProductsPage() {
     setModalOpen(true)
   }
 
+  async function handleUpload(file: File) {
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const fileName = `${Date.now()}.${ext}`
+      const { error } = await supabase.storage
+        .from('images')
+        .upload(fileName, file, { upsert: true })
+
+      if (error) { alert('Gagal upload: ' + error.message); return }
+
+      const { data } = supabase.storage.from('images').getPublicUrl(fileName)
+      setForm(f => ({ ...f, image: data.publicUrl }))
+    } finally {
+      setUploading(false)
+    }
+  }
+
   async function handleSave() {
     if (!form.name || !form.price) return
     setSaving(true)
@@ -76,7 +97,6 @@ export default function AdminProductsPage() {
     <div style={{ flex: 1 }}>
       <AdminHeader title="Produk" />
       <div style={{ padding: '24px 32px' }}>
-        {/* Top bar */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
           <button
             onClick={openAdd}
@@ -86,7 +106,6 @@ export default function AdminProductsPage() {
           </button>
         </div>
 
-        {/* Tabel */}
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--border)', overflow: 'hidden' }}>
           {loading ? (
             <div className="text-center" style={{ padding: 40, color: 'var(--text-muted)' }}>Memuat...</div>
@@ -155,15 +174,42 @@ export default function AdminProductsPage() {
                 <label className="block font-semibold text-sm" style={{ marginBottom: 6 }}>Deskripsi</label>
                 <textarea style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Deskripsi produk..." />
               </div>
+
+              {/* GAMBAR */}
               <div>
-                <label className="block font-semibold text-sm" style={{ marginBottom: 6 }}>URL Gambar</label>
-                <input style={inputStyle} value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} placeholder="https://..." />
+                <label className="block font-semibold text-sm" style={{ marginBottom: 6 }}>Gambar</label>
+
+                {/* Preview */}
                 {form.image && (
-                  <div style={{ marginTop: 10, borderRadius: 10, overflow: 'hidden', width: 100, height: 100, border: '1px solid var(--border)' }}>
+                  <div style={{ marginBottom: 10, borderRadius: 10, overflow: 'hidden', width: 100, height: 100, border: '1px solid var(--border)' }}>
                     <img src={form.image} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                   </div>
                 )}
+
+                {/* Upload file */}
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{
+                    border: '2px dashed var(--border)', borderRadius: 10, padding: '16px',
+                    textAlign: 'center', cursor: 'pointer', marginBottom: 10,
+                    background: uploading ? 'var(--bg-2)' : 'var(--bg)',
+                  }}
+                >
+                  {uploading ? '⏳ Mengupload...' : '📁 Klik untuk upload gambar'}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={e => { const f = e.target.files?.[0]; if (f) handleUpload(f) }}
+                />
+
+                {/* Atau URL manual */}
+                <p className="text-xs" style={{ color: 'var(--text-muted)', marginBottom: 6 }}>Atau masukkan URL gambar:</p>
+                <input style={inputStyle} value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} placeholder="https://..." />
               </div>
+
               <div>
                 <label className="block font-semibold text-sm" style={{ marginBottom: 6 }}>Kategori</label>
                 <select style={inputStyle} value={form.categoryId} onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))}>
@@ -179,7 +225,7 @@ export default function AdminProductsPage() {
 
             <div style={{ display: 'flex', gap: 12, marginTop: 28 }}>
               <button onClick={() => setModalOpen(false)} style={{ flex: 1, padding: '12px', background: 'var(--bg-2)', color: 'var(--text)', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>Batal</button>
-              <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '12px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={handleSave} disabled={saving || uploading} style={{ flex: 1, padding: '12px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}>
                 {saving ? 'Menyimpan...' : 'Simpan'}
               </button>
             </div>
