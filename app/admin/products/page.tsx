@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import AdminHeader from '@/components/admin/AdminHeader'
-import { supabasePublic } from '@/lib/db'
+import { supabasePublic } from '@/lib/supabase'
 
 interface Category { _id: string; name: string }
 interface Product {
