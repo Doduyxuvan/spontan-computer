@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/db'
+import { supabase } from '@/lib/supabaseServer'
 import { getAdminSession } from '@/lib/auth'
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
