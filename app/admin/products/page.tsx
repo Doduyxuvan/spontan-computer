@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import AdminHeader from '@/components/admin/AdminHeader'
-import { supabase } from '@/lib/db'
+import { supabasePublic } from '@/lib/db'
 
 interface Category { _id: string; name: string }
 interface Product {
@@ -57,18 +57,18 @@ export default function AdminProductsPage() {
     setModalOpen(true)
   }
 
-  async function handleUpload(file: File) {
+async function handleUpload(file: File) {
     setUploading(true)
     try {
       const ext = file.name.split('.').pop()
       const fileName = `${Date.now()}.${ext}`
-      const { error } = await supabase.storage
+      const { error } = await supabasePublic.storage   // ← sudah diganti
         .from('images')
         .upload(fileName, file, { upsert: true })
 
       if (error) { alert('Gagal upload: ' + error.message); return }
 
-      const { data } = supabase.storage.from('images').getPublicUrl(fileName)
+      const { data } = supabasePublic.storage.from('images').getPublicUrl(fileName)  // ← sudah diganti
       setForm(f => ({ ...f, image: data.publicUrl }))
     } finally {
       setUploading(false)
